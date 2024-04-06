@@ -3,8 +3,10 @@
 
   [Modelo OSI](/Tecnologia/Redes_de_computadores/modelo_OSI.md)
   <br/>
-  [Modelo TCP]()
+
+  [Modelo TCP](/Tecnologia/Redes_de_computadores/modelo_TCP-IP.md)
   <br/>
-  [Protocolos]()
+
+  [Protocolos](/Tecnologia/Redes_de_computadores/Protocolos.md)
   <br/>
 
