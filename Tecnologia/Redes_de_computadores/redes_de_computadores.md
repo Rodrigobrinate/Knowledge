@@ -1,7 +1,7 @@
 ## Redes de computadores 
 
 
-  [Modelo OSI](/modelo_OSI.md)
+  [Modelo OSI](/Tecnologia/Redes_de_computadores/modelo_OSI.md)
   <br/>
   [Modelo TCP]()
   <br/>
