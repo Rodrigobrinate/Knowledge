@@ -1,9 +1,10 @@
 ## Tecnologia
 
 
-[Programação de computadores](/Programacao_de_computadores/programacao.md)</li>
+[Programação de computadores](/Tecnologia/Programacao_de_computadores/programacao.md)</li>
 <br/>
-[Redes de computadores](/Redes_de_computadores/redes_de_computadores.md)</li>
+
+[Redes de computadores](/Tecnologia/redes_de_computadores.md)</li>
 <br/>
 
 
