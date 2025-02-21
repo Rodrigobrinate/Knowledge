@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Backbone Supplies – The Backbone of Connectivity</title>
+  <style>
+    /* ------------------------------------------------
+       Global Styles & Reset
+    ------------------------------------------------ */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #0a0a0a;
+      color: #e0e0e0;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    html {
+      scroll-behavior: smooth;
+    }
+    .container {
+      width: 90%;
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    /* ------------------------------------------------
+       Header & Navigation (Dynamic on Scroll)
+    ------------------------------------------------ */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      padding: 20px 0;
+      background: transparent;
+      transition: background 0.5s ease, padding 0.5s ease;
+      z-index: 1100;
+    }
+    header.scrolled {
+      background: rgba(10, 10, 10, 0.95);
+      padding: 10px 0;
+    }
+    .nav-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 20px;
+    }
+    .logo {
+      font-size: 1.8em;
+      font-weight: bold;
+      color: #00c0ff;
+    }
+    nav ul {
+      list-style: none;
+      display: flex;
+    }
+    nav ul li {
+      margin-left: 25px;
+    }
+    nav ul li a {
+      text-decoration: none;
+      color: #e0e0e0;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+    nav ul li a:hover {
+      color: #00c0ff;
+    }
+    .menu-toggle {
+      display: none;
+      font-size: 1.8em;
+      cursor: pointer;
+      color: #e0e0e0;
+    }
+    @media (max-width: 768px) {
+      nav {
+        display: none;
+        position: absolute;
+        top: 60px;
+        left: 0;
+        width: 100%;
+        background: rgba(10, 10, 10, 0.95);
+        flex-direction: column;
+      }
+      nav.active {
+        display: flex;
+      }
+      nav ul {
+        flex-direction: column;
+      }
+      nav ul li {
+        margin: 15px 0;
+        text-align: center;
+      }
+      .menu-toggle {
+        display: block;
+      }
+    }
+
+    /* ------------------------------------------------
+       Hero Section with Dual-Layer Animated Background
+    ------------------------------------------------ */
+    #hero {
+      position: relative;
+      height: 100vh;
+      overflow: hidden;
+      background: linear-gradient(45deg, #0d1b2a, #1b263b);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    /* Animated Gradient Overlay */
+    #hero::before {
+      content: "";
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(60deg, #0d1b2a, #1b263b, #415a77);
+      animation: gradientShift 15s ease infinite;
+      z-index: 1;
+      opacity: 0.6;
+    }
+    @keyframes gradientShift {
+      0% { transform: translate(0, 0); }
+      50% { transform: translate(20%, 20%); }
+      100% { transform: translate(0, 0); }
+    }
+    /* Hero Canvas for Particle Animation */
+    #heroCanvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+    }
+    /* Hero Content */
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 800px;
+      padding: 20px;
+    }
+    .hero-content h1 {
+      font-size: 3.5em;
+      margin-bottom: 20px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+    }
+    .hero-content p {
+      font-size: 1.3em;
+      margin-bottom: 30px;
+    }
+    .cta {
+      background: #00c0ff;
+      color: #0a0a0a;
+      padding: 15px 35px;
+      font-size: 1em;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 0 15px rgba(0, 192, 255, 0.5);
+    }
+    .cta:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 25px rgba(0, 192, 255, 0.7);
+    }
+    .cta:focus {
+      outline: none;
+    }
+
+    /* ------------------------------------------------
+       Services Section
+    ------------------------------------------------ */
+    #services {
+      padding: 80px 20px;
+      background: #131313;
+    }
+    #services h2 {
+      text-align: center;
+      margin-bottom: 50px;
+      font-size: 2.5em;
+      color: #00c0ff;
+    }
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 30px;
+    }
+    .service-card {
+      background: #1e1e1e;
+      padding: 30px;
+      border-radius: 12px;
+      text-align: center;
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+    .service-card:hover {
+      transform: translateY(-10px) rotate(0.5deg);
+      box-shadow: 0 10px 20px rgba(0,192,255,0.3);
+    }
+    .service-icon {
+      font-size: 3em;
+      margin-bottom: 20px;
+      color: #00c0ff;
+    }
+    .service-card h3 {
+      margin-bottom: 15px;
+      font-size: 1.5em;
+      color: #fff;
+    }
+    .service-card p {
+      font-size: 1em;
+      color: #ccc;
+    }
+
+    /* ------------------------------------------------
+       Testimonials Section
+    ------------------------------------------------ */
+    #testimonials {
+      padding: 80px 20px;
+      background: #0d0d0d;
+    }
+    #testimonials h2 {
+      text-align: center;
+      margin-bottom: 50px;
+      font-size: 2.5em;
+      color: #00c0ff;
+    }
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+    }
+    .testimonial-card {
+      background: #1e1e1e;
+      padding: 25px;
+      border-radius: 12px;
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
+    }
+    .testimonial-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 8px 18px rgba(0,192,255,0.3);
+    }
+    .testimonial-photo {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 15px;
+      border: 2px solid #00c0ff;
+    }
+    .testimonial-name {
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #fff;
+    }
+    .testimonial-text {
+      font-size: 0.95em;
+      color: #ccc;
+    }
+
+    /* ------------------------------------------------
+       Interactive Network Section
+    ------------------------------------------------ */
+    #network {
+      position: relative;
+      height: 600px;
+      background: #000;
+      overflow: hidden;
+    }
+    #networkCanvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+    .network-overlay {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      padding-top: 40px;
+      color: #00c0ff;
+    }
+    .network-overlay h2 {
+      font-size: 2.5em;
+      margin-bottom: 10px;
+    }
+    .network-overlay p {
+      font-size: 1.1em;
+    }
+
+    /* ------------------------------------------------
+       Footer
+    ------------------------------------------------ */
+    footer {
+      background: #111;
+      color: #ccc;
+      padding: 30px 20px;
+    }
+    .footer-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1200px;
+      margin: auto;
+    }
+    .footer-links a {
+      color: #00c0ff;
+      text-decoration: none;
+      margin: 0 15px;
+      transition: color 0.3s ease;
+    }
+    .footer-links a:hover {
+      color: #fff;
+    }
+    .footer-contact {
+      margin: 10px 0;
+    }
+  </style>
+</head>
+<body>
+  <!-- ------------------------------------
+       Fixed Header with Dynamic Background
+  ------------------------------------ -->
+  <header id="header">
+    <div class="nav-container">
+      <div class="logo">Backbone Supplies</div>
+      <div class="menu-toggle">&#9776;</div>
+      <nav>
+        <ul>
+          <li><a href="#hero">Home</a></li>
+          <li><a href="#services">Services</a></li>
+          <li><a href="#testimonials">Testimonials</a></li>
+          <li><a href="#network">Network</a></li>
+          <li><a href="#footer">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ------------------------------------
+       Hero Section with Dual-Layer Animation
+  ------------------------------------ -->
+  <section id="hero">
+    <!-- Canvas for creative particle animation -->
+    <canvas id="heroCanvas"></canvas>
+    <div class="hero-content container">
+      <h1>Backbone Supplies</h1>
+      <p>The Backbone of Business Connectivity</p>
+      <button class="cta" onclick="document.querySelector('#services').scrollIntoView({ behavior: 'smooth' });">
+        Get Started
+      </button>
+    </div>
+  </section>
+
+  <!-- ------------------------------------
+       Services Section
+  ------------------------------------ -->
+  <section id="services">
+    <div class="container">
+      <h2>Our Strategic Solutions</h2>
+      <div class="services-grid">
+        <div class="service-card">
+          <div class="service-icon">&#128187;</div>
+          <h3>Network Infrastructure</h3>
+          <p>Robust backbone solutions for enterprise connectivity.</p>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">&#128421;</div>
+          <h3>Data Centers</h3>
+          <p>State-of-the-art facilities powering mission-critical operations.</p>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">&#128640;</div>
+          <h3>Cloud Integration</h3>
+          <p>Seamless cloud connectivity for scalable business growth.</p>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">&#128241;</div>
+          <h3>Managed Services</h3>
+          <p>Expert support to ensure continuous operational excellence.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ------------------------------------
+       Testimonials Section
+  ------------------------------------ -->
+  <section id="testimonials">
+    <div class="container">
+      <h2>What Our Clients Say</h2>
+      <div class="testimonials-grid">
+        <div class="testimonial-card">
+          <img src="https://via.placeholder.com/60" alt="Client Photo" class="testimonial-photo" />
+          <div class="testimonial-name">Alice Thompson</div>
+          <div class="testimonial-text">
+            "Their network solutions have revolutionized our operations!"
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <img src="https://via.placeholder.com/60" alt="Client Photo" class="testimonial-photo" />
+          <div class="testimonial-name">Robert Lee</div>
+          <div class="testimonial-text">
+            "Unmatched expertise and reliable service – a true backbone for our business."
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <img src="https://via.placeholder.com/60" alt="Client Photo" class="testimonial-photo" />
+          <div class="testimonial-name">Monica Patel</div>
+          <div class="testimonial-text">
+            "Our connectivity has never been more secure and efficient."
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ------------------------------------
+       Interactive Network Section
+  ------------------------------------ -->
+  <section id="network">
+    <canvas id="networkCanvas"></canvas>
+    <div class="network-overlay">
+      <h2>Our Supply Network</h2>
+      <p>Visualizing the robust infrastructure behind our services.</p>
+    </div>
+  </section>
+
+  <!-- ------------------------------------
+       Footer
+  ------------------------------------ -->
+  <footer id="footer">
+    <div class="container footer-container">
+      <div class="footer-links">
+        <a href="#hero">Home</a>
+        <a href="#services">Services</a>
+        <a href="#testimonials">Testimonials</a>
+        <a href="#network">Network</a>
+      </div>
+      <div class="footer-contact">
+        <p>Contact: info@backbonesupplies.com</p>
+        <p>
+          Follow us:
+          <a href="#">LinkedIn</a> |
+          <a href="#">Twitter</a> |
+          <a href="#">Facebook</a>
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ------------------------------------
+       JavaScript for Interactivity & Animations
+  ------------------------------------ -->
+  <script>
+    /* --- Mobile Navigation Toggle --- */
+    const menuToggle = document.querySelector('.menu-toggle');
+    const nav = document.querySelector('nav');
+    menuToggle.addEventListener('click', () => {
+      nav.classList.toggle('active');
+    });
+
+    /* --- Smooth Scrolling for Nav Links --- */
+    document.querySelectorAll('nav ul li a').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        nav.classList.remove('active'); // close mobile nav
+        document.querySelector(link.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
+      });
+    });
+
+    /* --- Dynamic Header Background on Scroll --- */
+    const header = document.getElementById('header');
+    window.addEventListener('scroll', () => {
+      header.classList.toggle('scrolled', window.scrollY > 80);
+    });
+
+    /* ------------------------------------------------
+       Hero Canvas Animation: Particle Network Effect
+    ------------------------------------------------ */
+    const heroCanvas = document.getElementById('heroCanvas');
+    const hCtx = heroCanvas.getContext('2d');
+    let heroParticles = [];
+    const heroParticleCount = 50;
+    const heroMaxDistance = 120;
+
+    // Resize hero canvas to fill hero section
+    function resizeHeroCanvas() {
+      heroCanvas.width = heroCanvas.offsetWidth;
+      heroCanvas.height = heroCanvas.offsetHeight;
+    }
+    window.addEventListener('resize', resizeHeroCanvas);
+    resizeHeroCanvas();
+
+    // Particle class for hero animation
+    class HeroParticle {
+      constructor(x, y) {
+        this.x = x || Math.random() * heroCanvas.width;
+        this.y = y || Math.random() * heroCanvas.height;
+        this.radius = Math.random() * 2 + 1;
+        this.vx = (Math.random() - 0.5) * 1;
+        this.vy = (Math.random() - 0.5) * 1;
+      }
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        // Wrap around edges
+        if (this.x < 0) this.x = heroCanvas.width;
+        if (this.x > heroCanvas.width) this.x = 0;
+        if (this.y < 0) this.y = heroCanvas.height;
+        if (this.y > heroCanvas.height) this.y = 0;
+      }
+      draw() {
+        hCtx.beginPath();
+        hCtx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        hCtx.fillStyle = "#00c0ff";
+        hCtx.fill();
+      }
+    }
+
+    // Initialize hero particles
+    for (let i = 0; i < heroParticleCount; i++) {
+      heroParticles.push(new HeroParticle());
+    }
+
+    // Animation loop for hero canvas
+    function animateHero() {
+      hCtx.clearRect(0, 0, heroCanvas.width, heroCanvas.height);
+      // Draw connections and update particles
+      for (let i = 0; i < heroParticles.length; i++) {
+        const p1 = heroParticles[i];
+        p1.update();
+        p1.draw();
+        for (let j = i + 1; j < heroParticles.length; j++) {
+          const p2 = heroParticles[j];
+          const dx = p1.x - p2.x;
+          const dy = p1.y - p2.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < heroMaxDistance) {
+            hCtx.beginPath();
+            hCtx.moveTo(p1.x, p1.y);
+            hCtx.lineTo(p2.x, p2.y);
+            hCtx.strokeStyle = `rgba(0,192,255,${1 - dist / heroMaxDistance})`;
+            hCtx.lineWidth = 1;
+            hCtx.stroke();
+          }
+        }
+      }
+      requestAnimationFrame(animateHero);
+    }
+    animateHero();
+
+    /* ------------------------------------------------
+       Interactive Network Canvas (Bottom Section)
+       Similar to previous examples but with a darker theme.
+    ------------------------------------------------ */
+    const networkCanvas = document.getElementById('networkCanvas');
+    const nCtx = networkCanvas.getContext('2d');
+    let networkNodes = [];
+    const baseNodes = 25;
+    const networkMaxDistance = 200;
+    let mousePos = { x: null, y: null };
+
+    function resizeNetworkCanvas() {
+      networkCanvas.width = networkCanvas.offsetWidth;
+      networkCanvas.height = networkCanvas.offsetHeight;
+    }
+    window.addEventListener('resize', resizeNetworkCanvas);
+    resizeNetworkCanvas();
+
+    class NetworkNode {
+      constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.radius = 3 + Math.random() * 2;
+        this.vx = (Math.random() - 0.5) * 1.5;
+        this.vy = (Math.random() - 0.5) * 1.5;
+      }
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        if (this.x < 0 || this.x > networkCanvas.width) this.vx *= -1;
+        if (this.y < 0 || this.y > networkCanvas.height) this.vy *= -1;
+      }
+      draw() {
+        nCtx.beginPath();
+        nCtx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        nCtx.fillStyle = '#00c0ff';
+        nCtx.fill();
+      }
+    }
+    for (let i = 0; i < baseNodes; i++) {
+      networkNodes.push(new NetworkNode(Math.random() * networkCanvas.width, Math.random() * networkCanvas.height));
+    }
+    function animateNetwork() {
+      nCtx.clearRect(0, 0, networkCanvas.width, networkCanvas.height);
+      // Slight trail effect
+      nCtx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+      nCtx.fillRect(0, 0, networkCanvas.width, networkCanvas.height);
+      networkNodes.forEach(node => {
+        node.update();
+        node.draw();
+      });
+      // Draw connections between nodes
+      for (let i = 0; i < networkNodes.length; i++) {
+        for (let j = i + 1; j < networkNodes.length; j++) {
+          const dx = networkNodes[i].x - networkNodes[j].x;
+          const dy = networkNodes[i].y - networkNodes[j].y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          if (distance < networkMaxDistance) {
+            nCtx.beginPath();
+            nCtx.moveTo(networkNodes[i].x, networkNodes[i].y);
+            nCtx.lineTo(networkNodes[j].x, networkNodes[j].y);
+            nCtx.strokeStyle = `rgba(0,192,255,${1 - distance / networkMaxDistance})`;
+            nCtx.lineWidth = 1;
+            nCtx.stroke();
+          }
+        }
+      }
+      // Additional links for mouse proximity
+      if (mousePos.x && mousePos.y) {
+        networkNodes.forEach(node => {
+          const dx = node.x - mousePos.x;
+          const dy = node.y - mousePos.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          if (distance < networkMaxDistance / 2) {
+            nCtx.beginPath();
+            nCtx.moveTo(mousePos.x, mousePos.y);
+            nCtx.lineTo(node.x, node.y);
+            nCtx.strokeStyle = `rgba(255,255,255,${1 - distance / (networkMaxDistance / 2)})`;
+            nCtx.lineWidth = 1;
+            nCtx.stroke();
+          }
+        });
+      }
+      requestAnimationFrame(animateNetwork);
+    }
+    animateNetwork();
+
+    canvas.addEventListener('mousemove', (e) => {}); // dummy to prevent errors
+
+    // Mouse events for network canvas
+    networkCanvas.addEventListener('mousemove', (e) => {
+      const rect = networkCanvas.getBoundingClientRect();
+      mousePos.x = e.clientX - rect.left;
+      mousePos.y = e.clientY - rect.top;
+    });
+    networkCanvas.addEventListener('mouseleave', () => {
+      mousePos.x = null;
+      mousePos.y = null;
+    });
+    // Click to add new node on network canvas
+    networkCanvas.addEventListener('click', (e) => {
+      const rect = networkCanvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      networkNodes.push(new NetworkNode(x, y));
+    });
+  </script>
+</body>
+</html>
